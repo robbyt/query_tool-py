@@ -1,6 +1,6 @@
 This is a CLI tool that will help you query data from your Puppet Master. It's useful if you would like to find a list of servers that match one or more Facter facts.
 
-This iteration of the query tool is actually the third in a series, and was originally inspired by a tool from joemac on #puppet on FreeNode. This rewrite differs from the last ruby rewrite for 2 main reasons:
+This iteration of the query tool is actually the third in a series, and was originally inspired by a tool from joemac on #puppet on FreeNode. This rewrite differs from my last ruby version of this tool for two important reasons:
 
 * it is written in python (because I'm better at writing python than ruby)
 * it is really fast! (but it requires Puppet 2.6.7 and above)
