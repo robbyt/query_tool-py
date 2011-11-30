@@ -18,8 +18,8 @@ class UserInput(object):
         # prep some variables
         self.args = args
         self.htext = {
-            'fact':         "The fact:data that you want to search for, can be used multiple times to filter for multiple facts. --fact kernel Linux --fact ec2_size m1.small",
-            'puppetmaster': 'The PuppetMaster REST address to query against',
+            'fact':         "The fact:data that you want to search for, can be used multiple times to filter for multiple facts. Usage Example: --fact kernel Linux --fact ec2_size m1.small",
+            'puppetmaster': 'The PuppetMaster REST address to query against. Must be formatted like this: https://127.0.0.1:8140/production/facts_search/search?',
             'cert':         'The SSL cert to use for authentication',
             'key':          'The SSL key to use for authentication',
             'yaml':         'Output the results in raw yaml',
@@ -36,7 +36,7 @@ class UserInput(object):
             "-f", "--fact",
             action='append',
             dest="fact",
-            #help=self.htext['fact'],
+            help=self.htext['fact'],
             required=True,
             nargs=2, 
             metavar=('factname', 'factvalue')
@@ -46,7 +46,7 @@ class UserInput(object):
             "-p", "--puppetmaster",
             dest="puppetmaster",
             help=self.htext['puppetmaster'],
-            default='http://127.0.0.1:8140/production/facts_search/search?'
+            default='https://127.0.0.1:8140/production/facts_search/search?'
         )
 
         self.parser.add_argument(
