@@ -9,3 +9,22 @@ The reason that this rewrite is much faster than my last rewrite is because this
 
 Using the Inventory Service requires that you setup an SSL cert for this script, and configure some other things on your puppetmaster. If this sounds like too much work, or if you don't really need high-performance queries, check out my Ruby query tool instead: https://github.com/robbyt/puppet-querytool.rb
 
+
+usage: query_tool.py [-h] -f factname factvalue [-p PUPPETMASTER] [-c CERT]
+                     [-k KET] [--yaml] [--output_fact OUTPUT_FACT] [--debug]
+
+query_tool
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f factname factvalue, --fact factname factvalue
+  -p PUPPETMASTER, --puppetmaster PUPPETMASTER
+                        The PuppetMaster REST address to query against
+  -c CERT, --cert CERT  The SSL cert to use for authentication
+  -k KET, --key KET     The SSL key to use for authentication
+  --yaml                Output the results in raw yaml
+  --output_fact OUTPUT_FACT
+                        What fact do you want to find out from these servers
+  --debug
+
+

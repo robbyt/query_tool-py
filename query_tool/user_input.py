@@ -20,8 +20,8 @@ class UserInput(object):
         self.htext = {
             'fact':         "The fact:data that you want to search for, can be used multiple times to filter for multiple facts. Usage Example: --fact kernel Linux --fact ec2_size m1.small",
             'puppetmaster': 'The PuppetMaster REST address to query against. Must be formatted like this: https://127.0.0.1:8140/production/facts_search/search?',
-            'cert':         'The SSL cert to use for authentication',
-            'key':          'The SSL key to use for authentication',
+            'ssl_cert':         'The SSL cert to use for authentication',
+            'ssl_key':          'The SSL key to use for authentication',
             'yaml':         'Output the results in raw yaml',
             'output_fact':  'What fact do you want to find out from these servers'
         }
@@ -51,15 +51,15 @@ class UserInput(object):
 
         self.parser.add_argument(
             "-c", "--cert",
-            dest="cert",
-            help=self.htext['cert'],
+            dest="ssl_cert",
+            help=self.htext['ssl_cert'],
             default='/var/lib/puppet/ssl/certs/ec2_runner.pem'
         )
 
         self.parser.add_argument(
             "-k", "--key",
-            dest="ket",
-            help=self.htext['key'],
+            dest="ssl_key",
+            help=self.htext['ssl_key'],
             default='/var/lib/puppet/ssl/private_keys/ec2_runner.pem'
         )
 
@@ -86,7 +86,10 @@ class UserInput(object):
     
     def get_args_as_dict(self):
         d = vars(self._parse_args())
-        if self.debug_enabled(): print 'parsed args in dict: ' + str(d)
+        if self.debug_enabled():
+            print 'parsed args in dict:'
+            for i in d.iteritems():
+                print i
         return d
 
     def get_facts_as_dict(self):

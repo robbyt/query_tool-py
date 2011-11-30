@@ -15,6 +15,6 @@ if __name__ == '__main__':
     action.run()
 
     if data['yaml']:
-        print action.return_yaml
+        print action.return_yaml()
     else:
-        print action.return_text
+        print action.return_text()
