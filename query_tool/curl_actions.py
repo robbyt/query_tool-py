@@ -66,7 +66,7 @@ class CurlActions(object):
 
     def return_text(self):
         if self.debug: print "returning text"
-        self.y = load(self.response_buffer.getvalue())
+        self.y = load(self.response_buffer.getvalue(), Loader=Loader)
         return '\n'.join(self.y)
 
     def return_list(self):
