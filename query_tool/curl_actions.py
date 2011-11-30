@@ -1,7 +1,16 @@
 import pycurl
 import StringIO
-import yaml
+from yaml import load, dump
 import urllib
+
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
+
+FACT_SEARCH = '/production/facts_search/search?'
+NODE_SEARCH = '/production/fact/search?'
 
 class DictProblem(Exception):
     """
@@ -10,7 +19,7 @@ class DictProblem(Exception):
     pass
 
 class CurlActions(object):
-    def __init__(self, facts, **kwargs):
+    def __init__(self, facts, fact_search=True,**kwargs):
         self.facts          = facts
         self.puppetmaster   = kwargs['puppetmaster']
         self.ssl_cert       = kwargs['ssl_cert']
@@ -18,9 +27,14 @@ class CurlActions(object):
         self.yaml           = kwargs['yaml']
         self.output_fact    = kwargs['output_fact']
         self.debug          = kwargs['debug']
+
+        if fact_search:
+            self.url_path = FACT_SEARCH
+        else:
+            self.url_path = NODE_SEARCH
         
         self.response_buffer = StringIO.StringIO()
-        self.url = self._url_prep(self.puppetmaster, self._fact_prep(self.facts))
+        self.url = self._url_prep(self.puppetmaster, self.url_path, self._fact_prep(self.facts))
 
         self.c = pycurl.Curl()
         self.c.setopt(pycurl.URL, self.url)
@@ -39,19 +53,23 @@ class CurlActions(object):
         else:
             return d
         
-    def _url_prep(self, puppetmaster, facts):
-        return puppetmaster + urllib.urlencode(facts)
+    def _url_prep(self, puppetmaster, url_path, facts):
+        return puppetmaster + url_path + urllib.urlencode(facts)
 
     def run(self):
         if self.debug: print "connecting to: " + self.url
         self.c.perform()
 
     def return_yaml(self):
+        if self.debug: print "returning yaml"
         return self.response_buffer.getvalue()
 
     def return_text(self):
-        self.y = yaml.load(self.response_buffer.getvalue())
+        if self.debug: print "returning text"
+        self.y = load(self.response_buffer.getvalue())
         return '\n'.join(self.y)
 
-        #for line in self.y:
-        #    print line
+    def return_list(self):
+        if self.debug: print "returning a python list object"
+        return load(self.response_buffer.getvalue())
+

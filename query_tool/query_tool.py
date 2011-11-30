@@ -14,7 +14,18 @@ if __name__ == '__main__':
     action = CurlActions(facts = ui.get_facts_as_dict(), **data)
     action.run()
 
-    if data['yaml']:
-        print action.return_yaml()
+    # if the output format is default, just output the FQDNs
+    if data['output_fact'] == 'fqdn':
+        if data['debug']: print 'output_fact is set to "%s" so we can return the current data' % (data['output_fact'])
+        
+        if data['yaml']:
+            print action.return_yaml()
+        else:
+            print action.return_text()
+
+    # otherwise, we have to do some more work
     else:
-        print action.return_text()
+        if data['debug']: print 'output_fact is set to "%s" so we have to run some more queries' % (data['output_fact'])
+        pass
+        
+        
