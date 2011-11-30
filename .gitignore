@@ -1,0 +1,8 @@
+*.pyc
+*.swp
+dist/
+build/
+elb_tool.egg-info/
+debian/elb-tool*
+debian/files
+debian/python-module-stampdir/
