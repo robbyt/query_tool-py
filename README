@@ -1,0 +1,9 @@
+This tool is the third in a series of tools originally inspired by a tool from joemac on #puppet on FreeNode. This rewrite differs from the last ruby rewrite for 2 main reasons:
+
+* it is written in python (because I'm better at writing python)
+* it is really fast! But it requires Puppet 2.6.7 and above
+
+The reason that this rewrite is much faster than my last rewrite is because this version uses the official Puppet Inventory API: http://docs.puppetlabs.com/guides/inventory_service.html
+
+Using the Inventory Service requires that you setup an SSL cert for this script, and configure some other things. If this sounds like too much work, or if you don't really need high-performance queries, check out my Ruby query tool instead: https://github.com/robbyt/puppet-querytool.rb
+
