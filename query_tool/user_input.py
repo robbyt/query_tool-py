@@ -53,14 +53,14 @@ class UserInput(object):
             "-c", "--cert",
             dest="ssl_cert",
             help=self.htext['ssl_cert'],
-            default='/var/lib/puppet/ssl/certs/ec2_runner.pem'
+            default='/var/lib/puppet/ssl/certs/query_tool.pem'
         )
 
         self.parser.add_argument(
             "-k", "--key",
             dest="ssl_key",
             help=self.htext['ssl_key'],
-            default='/var/lib/puppet/ssl/private_keys/ec2_runner.pem'
+            default='/var/lib/puppet/ssl/private_keys/query_tool.pem'
         )
 
         self.parser.add_argument(
