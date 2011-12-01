@@ -10,7 +10,7 @@ except ImportError:
 
 
 FACT_SEARCH = '/production/facts_search/search?'
-NODE_SEARCH = '/production/fact/search?'
+NODE_SEARCH = '/production/fact/'
 
 class DictProblem(Exception):
     """
@@ -95,10 +95,14 @@ class CurlActions(object):
     def run(self):
         if self.debug: print "connecting to: " + self.url
         self.c.perform()
+
+        # check the http code to make sure the query was successful
         self.http_code = self.c.getinfo(pycurl.HTTP_CODE)
         if self.http_code != 200:
             raise HTTPCodeProblem('Error connecting to the Puppet inventory API, received http code: %s' % (self.http_code))
-
+        else:
+            if self.debug: print "Successfully connected to API"
+            return True
 
     def return_yaml(self):
         if self.debug: print "returning yaml"
