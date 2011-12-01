@@ -26,6 +26,17 @@ if __name__ == '__main__':
     # otherwise, we have to do some more work
     else:
         if data['debug']: print 'output_fact is set to "%s" so we have to run some more queries' % (data['output_fact'])
-        pass
+        search_results = {}
+        for t in action.return_list():
+            node_search = CurlActions(target=t, fact_search=False, **data)
+            node_search.run()
+            search_results[t] = str(node_search.return_text())
+            if data['debug']: print 'Added a new element to search_results: %s' % (search_results[t])
+
+        if data['yaml']:
+            print 'not implemented.'
+        else:
+            print search_results
+            #'\n'.join(search_results)
         
         
