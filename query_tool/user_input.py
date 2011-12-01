@@ -4,6 +4,9 @@ import os
 
 class UserInput(object):
     usage = "Please read --help"
+    data = {}
+    facts = {}
+    debug = False
 
     def __init__(self, args):
         '''
@@ -20,14 +23,21 @@ class UserInput(object):
         self.htext = {
             'fact':         "The fact:data that you want to search for, can be used multiple times to filter for multiple facts. Usage Example: --fact kernel Linux --fact ec2_size m1.small",
             'puppetmaster': 'The PuppetMaster REST address to query against. Must be formatted like this: https://127.0.0.1:8140/',
-            'ssl_cert':         'The SSL cert to use for authentication',
-            'ssl_key':          'The SSL key to use for authentication',
+            'ssl_cert':     'The SSL cert to use for authentication',
+            'ssl_key':      'The SSL key to use for authentication',
             'yaml':         'Output the results in raw yaml',
             'output_fact':  'What fact do you want to find out from these servers'
         }
 
-        #run the arg parser methods
+        # run the arg parser methods
         self._setup_args()
+
+        self.parsed_args = self._parse_args()
+
+        # and store the results as class variables
+        UserInput.data = self.get_args_as_dict()
+        UserInput.facts = self.get_facts_as_dict()
+        UserInput.debug = self.debug()
 
     def _setup_args(self):
         '''operands, or server/cluster to perform an operation on'''
@@ -46,7 +56,7 @@ class UserInput(object):
             "-p", "--puppetmaster",
             dest="puppetmaster",
             help=self.htext['puppetmaster'],
-            default='https://127.0.0.1:8140/'
+            default='https://127.0.0.1:8140'
         )
 
         self.parser.add_argument(
@@ -72,7 +82,7 @@ class UserInput(object):
         )
 
         self.parser.add_argument(
-            "--output_fact",
+            "-o", "--output_fact",
             dest="output_fact",
             help=self.htext['output_fact'],
             default='fqdn'
@@ -85,20 +95,22 @@ class UserInput(object):
         return self.parser.parse_args(self.args)
     
     def get_args_as_dict(self):
-        d = vars(self._parse_args())
+        args_as_dict = vars(self.parsed_args)
         if self.debug_enabled():
             print 'parsed args in dict:'
-            for i in d.iteritems():
+            for i in args_as_dict.iteritems():
                 print i
-        return d
+        return args_as_dict
 
     def get_facts_as_dict(self):
-        d = self._parse_args()
-        if self.debug_enabled(): print 'parsed facts: ' + str(d.fact)
-        return dict(d.fact)
+        self.debug_say('parsed facts: ' + str(self.parsed_args['fact']))
+        return dict(self.parsed_args['fact'])
 
-    def debug_enabled(self):
-        res = self._parse_args()
-        return res.debug
+    def debug(self):
+        return self.parsed_args['debug']
+
+    def debug_say(self, msg):
+        if self.debug():
+            print msg
 
 
