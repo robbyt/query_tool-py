@@ -38,15 +38,23 @@ def debug_test():
     ui = UserInput(['--fact', 'server_type', 'webapp', '--debug'])
     assert_equal(ui.data['debug'], True)
 
-def debug_test2():
+def single_fact_test1():
     ui = UserInput(['--fact', 'server_type', 'webapp', '--debug'])
     data = ui.get_args_as_dict()
+    facts = ui.get_facts_as_dict()
     assert_equal(data, MOCK_DATA1)
+    assert_equal(facts, {'server_type': 'webapp'} )
+
+def single_fact_test2():
+    ui = UserInput(['--fact', 'server_type', 'webapp', '--debug'])
+    data = ui.get_facts_as_dict()
 
 def two_facts_test():
     ui = UserInput(['--fact', 'server_type', 'webapp', '--debug', '--fact', 'ec2_instance_type', 'm1.large'])
     data = ui.get_args_as_dict()
+    facts = ui.get_facts_as_dict()
     assert_equal(data, MOCK_DATA2)
+    assert_equal(facts, {'server_type': 'webapp', 'ec2_instance_type': 'm1.large'} )
 
 def output_test():
     ui = UserInput(['--fact', 'server_type', 'webapp', '--debug', '-o', 'hostname'])
