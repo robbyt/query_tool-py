@@ -41,9 +41,13 @@ def debug_test():
 def single_fact_test1():
     ui = UserInput(['--fact', 'server_type', 'webapp', '--debug'])
     data = ui.get_args_as_dict()
+    data_class_var = ui.data
     facts = ui.get_facts_as_dict()
+    facts_class_var = ui.get_facts_as_dict()
     assert_equal(data, MOCK_DATA1)
+    assert_equal(data, data_class_var)
     assert_equal(facts, {'server_type': 'webapp'} )
+    assert_equal(facts, facts_class_var)
 
 def single_fact_test2():
     ui = UserInput(['--fact', 'server_type', 'webapp', '--debug'])

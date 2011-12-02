@@ -5,6 +5,7 @@ import os
 class UserInput(object):
     usage = "Please read --help"
     data = None
+    facts = None
 #    facts = {}
 #    debug = False
 
@@ -97,6 +98,7 @@ class UserInput(object):
         containing the various key/values after being parsed
         """
         UserInput.data = vars(self.parser.parse_args(self.args))
+        UserInput.facts = vars(self.parser.parse_args(self.args))['fact']
         return UserInput.data
     
     def get_args_as_dict(self):
