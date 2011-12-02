@@ -4,9 +4,9 @@ import os
 
 class UserInput(object):
     usage = "Please read --help"
-    data = {}
-    facts = {}
-    debug = False
+    data = None
+#    facts = {}
+#    debug = False
 
     def __init__(self, args):
         '''
@@ -32,12 +32,12 @@ class UserInput(object):
         # run the arg parser methods
         self._setup_args()
 
-        self.parsed_args = self._parse_args()
+        # create a class variable with parsed args
+        self._parse_args()
 
         # and store the results as class variables
         UserInput.data = self.get_args_as_dict()
         UserInput.facts = self.get_facts_as_dict()
-        UserInput.debug = self.debug()
 
     def _setup_args(self):
         '''operands, or server/cluster to perform an operation on'''
@@ -92,25 +92,31 @@ class UserInput(object):
         self.parser.add_argument("--debug", action="store_true", dest="debug", default=False)
 
     def _parse_args(self):
-        return self.parser.parse_args(self.args)
+        """
+        Parses the args that were passed into sys.argv, then creates a dict
+        containing the various key/values after being parsed
+        """
+        UserInput.data = vars(self.parser.parse_args(self.args))
+        return UserInput.data
     
     def get_args_as_dict(self):
-        args_as_dict = vars(self.parsed_args)
-        if self.debug_enabled():
+        if UserInput.data['debug']:
             print 'parsed args in dict:'
-            for i in args_as_dict.iteritems():
+            for i in UserInput.data.iteritems():
                 print i
-        return args_as_dict
+        return UserInput.data
 
     def get_facts_as_dict(self):
-        self.debug_say('parsed facts: ' + str(self.parsed_args['fact']))
-        return dict(self.parsed_args['fact'])
+        if UserInput.data['debug']:
+            print 'parsed facts: ' + str(UserInput.data['fact'])
+        return dict(UserInput.data['fact'])
 
-    def debug(self):
-        return self.parsed_args['debug']
+    #def debug(self):
+    #    UserInput.debug = self.parsed_args['debug']
+    #    return UserInput.data['debug']
 
-    def debug_say(self, msg):
-        if self.debug():
-            print msg
+#    def debug_say(self, msg):
+#        if self.debug():
+#            print msg
 
 
