@@ -1,16 +1,10 @@
 import pycurl
 import StringIO
-from yaml import load, dump, add_constructor
 import urllib
-
-try:
-    from yaml import CLoader as Loader, CDumper as Dumper
-except ImportError:
-    from yaml import Loader, Dumper
-
+from user_input import UserInput as ui
 
 FACT_SEARCH = '/production/facts_search/search?'
-NODE_SEARCH = '/production/fact/'
+NODE_SEARCH = '/production/facts/'
 
 class DictProblem(Exception):
     """
@@ -24,22 +18,28 @@ class TargetProblem(Exception):
 class HTTPCodeProblem(Exception):
     pass
 
-def yaml_hack():
-    def yaml_builder(loader, node):
-        return loader.construct_mapping(node)['values']
-    add_constructor(u'!ruby/object:Puppet::Node::Facts', yaml_builder)
-
-
 class CurlActions(object):
-    def __init__(self, facts=None, target=None, fact_search=True,**kwargs):
-        self.facts          = facts
+
+    first_query = None
+    second_query = {}
+
+    def __init__(self, target=None, fact_search=True):
+        """
+        facts is a parsed hash of facts, that are by default stored in a classvar 
+        in the UserInput class. 
+
+        target is optional, and used when fact_search = False,
+        This implementaion is not great- it will switch the URL global 
+        from FACT_SEARCH to NODE_SEARCH, and do some other things. This is used
+        when we have to do a 2nd lookup, to find an alternative factoutput (-o)
+        """
+        self.facts          = ui.facts
         self.target         = target
-        self.puppetmaster   = kwargs['puppetmaster']
-        self.ssl_cert       = kwargs['ssl_cert']
-        self.ssl_key        = kwargs['ssl_key']
-        self.yaml           = kwargs['yaml']
-        self.output_fact    = kwargs['output_fact']
-        self.debug          = kwargs['debug']
+        self.puppetmaster   = ui.data['puppetmaster']
+        self.ssl_cert       = ui.data['ssl_cert']
+        self.ssl_key        = ui.data['ssl_key']
+        self.output_fact    = ui.data['output_fact']
+        self.debug          = ui.data['debug']
 
         if fact_search:
             if self.target is not None:
@@ -49,7 +49,6 @@ class CurlActions(object):
         else:
             if self.target is None:
                 raise TargetProblem('fact_search is false, but I did not receive a target, this should not happen')
-            yaml_hack()
             self.url = self._url_prep(self.puppetmaster, NODE_SEARCH, self.target)
             if self.debug: print "built a query URL: " + self.url
         
@@ -80,6 +79,8 @@ class CurlActions(object):
         """
         Setup standard http-style post-back &query=foo
         """
+        if self.debug:
+            print "building a query string for %s" % str(query_dict)
         return urllib.urlencode(query_dict)
 
     def _url_prep(self, puppetmaster, url_path, query=None):
@@ -102,18 +103,10 @@ class CurlActions(object):
             raise HTTPCodeProblem('Error connecting to the Puppet inventory API, received http code: %s' % (self.http_code))
         else:
             if self.debug: print "Successfully connected to API"
+            CurlActions.first_query = self.response_buffer.getvalue()
             return True
 
     def return_yaml(self):
         if self.debug: print "returning yaml"
         return self.response_buffer.getvalue()
-
-    def return_text(self):
-        if self.debug: print "returning text"
-        self.y = load(self.response_buffer.getvalue(), Loader=Loader)
-        return '\n'.join(self.y)
-
-    def return_list(self):
-        if self.debug: print "returning a python list object"
-        return load(self.response_buffer.getvalue())
 
