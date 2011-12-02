@@ -20,10 +20,11 @@ class HTTPCodeProblem(Exception):
 
 class CurlActions(object):
 
-    first_query = None
+    first_query_results_yaml = None
+    targets = []
     second_query = {}
 
-    def __init__(self, target=None, fact_search=True):
+    def __init__(self, target=None, fact_search=True, **kwargs):
         """
         facts is a parsed hash of facts, that are by default stored in a classvar 
         in the UserInput class. 
@@ -33,13 +34,13 @@ class CurlActions(object):
         from FACT_SEARCH to NODE_SEARCH, and do some other things. This is used
         when we have to do a 2nd lookup, to find an alternative factoutput (-o)
         """
-        self.facts          = ui.facts
         self.target         = target
-        self.puppetmaster   = ui.data['puppetmaster']
-        self.ssl_cert       = ui.data['ssl_cert']
-        self.ssl_key        = ui.data['ssl_key']
-        self.output_fact    = ui.data['output_fact']
-        self.debug          = ui.data['debug']
+        self.facts          = kwargs.get('facts', ui.facts)
+        self.puppetmaster   = kwargs.get('puppetmaster', ui.data['puppetmaster'])
+        self.ssl_cert       = kwargs.get('ssl_cert', ui.data['ssl_cert'])
+        self.ssl_key        = kwargs.get('ssl_key', ui.data['ssl_key'])
+        self.output_fact    = kwargs.get('output_fact', ui.data['output_fact'])
+        self.debug          = kwargs.get('debug', ui.data['debug'])
 
         if fact_search:
             if self.target is not None:
@@ -94,19 +95,32 @@ class CurlActions(object):
         return puppetmaster + url_path + query
 
     def run(self):
+        """
+        Sends the built request to the API, updates a classvar with the 
+        output from the req
+        """
         if self.debug: print "connecting to: " + self.url
         self.c.perform()
 
-        # check the http code to make sure the query was successful
+        if self.check_http_code():
+            CurlActions.first_query_results_yaml = self.response_buffer.getvalue()
+            return True
+        else:
+            raise HTTPCodeProblem('Error connecting to the Puppet inventory API')
+
+    def check_http_code(self):
+        """
+        check the http code to make sure the query was successful
+        """
         self.http_code = self.c.getinfo(pycurl.HTTP_CODE)
         if self.http_code != 200:
-            raise HTTPCodeProblem('Error connecting to the Puppet inventory API, received http code: %s' % (self.http_code))
+            if self.debug: print "Problems connecting to to API, HTTP Code was: %s" % (self.http_code)
+            return False
         else:
             if self.debug: print "Successfully connected to API"
-            CurlActions.first_query = self.response_buffer.getvalue()
             return True
 
     def return_yaml(self):
         if self.debug: print "returning yaml"
-        return self.response_buffer.getvalue()
+        return CurlActions.first_query_results_yaml
 
