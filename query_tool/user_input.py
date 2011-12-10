@@ -13,7 +13,11 @@ class UserInput(object):
         '''
         sets up the user input system. When setting up this 
         class, pass sys.argv[1:] into the class, otherwise for testing
-        pass in a dict of simulated arguments
+        pass in a dict of simulated arguments.
+
+        When a class object is created, and passed a list of the unparsed 
+        args, it will auto-parse them into dicts, stored as Class Variables
+        data, facts.
         '''
         
         # setup the parser
@@ -101,14 +105,14 @@ class UserInput(object):
         UserInput.facts = vars(self.parser.parse_args(self.args))['fact']
         return UserInput.data
     
-    def get_args_as_dict(self):
+    def _get_args_as_dict(self):
         if UserInput.data['debug']:
             print 'parsed args in dict:'
             for i in UserInput.data.iteritems():
                 print i
         return UserInput.data
 
-    def get_facts_as_dict(self):
+    def _get_facts_as_dict(self):
         if UserInput.data['debug']:
             print 'parsed facts: ' + str(UserInput.data['fact'])
         return dict(UserInput.data['fact'])
