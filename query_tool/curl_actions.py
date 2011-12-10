@@ -3,8 +3,11 @@ import StringIO
 import urllib
 from user_input import UserInput as ui
 
-FACT_SEARCH = '/production/facts_search/search?'
-NODE_SEARCH = '/production/facts/'
+# for building a list of nodes
+NODE_SEARCH = '/production/facts_search/search?'
+
+# once we have our list of nodes, this will return fact from a single node
+FACT_SEARCH = '/production/facts/'
 
 class DictProblem(Exception):
     """
@@ -44,18 +47,7 @@ class CurlActions(object):
         self.ssl_key        = kwargs.get('ssl_key', ui.data['ssl_key'])
         self.output_fact    = kwargs.get('output_fact', ui.data['output_fact'])
         self.debug          = kwargs.get('debug', ui.data['debug'])
-
-        if fact_search:
-            if self.target is not None:
-                raise TargetProblem('fact_search is true, but I received a target, this should not happen')
-            self.url = self._url_prep(self.puppetmaster, FACT_SEARCH, self._query_prep(self._fact_prep(self.facts)))
-            if self.debug: print "built a query URL: " + self.url
-        else:
-            if self.target is None:
-                raise TargetProblem('fact_search is false, but I did not receive a target, this should not happen')
-            self.url = self._url_prep(self.puppetmaster, NODE_SEARCH, self.target)
-            if self.debug: print "built a query URL: " + self.url
-        
+ 
         self.response_buffer = StringIO.StringIO()
 
         self.c = pycurl.Curl()
@@ -78,14 +70,6 @@ class CurlActions(object):
             return dict([(append_string + k, self._fact_prep(v)) for k, v in d.items()])
         else:
             return d
-    
-    def _query_prep(self, query_dict):
-        """
-        Setup standard http-style post-back &query=foo
-        """
-        if self.debug:
-            print "building a query string for %s" % str(query_dict)
-        return urllib.urlencode(query_dict)
 
     def _url_prep(self, puppetmaster, url_path, query=None):
         """
@@ -136,6 +120,33 @@ class NodeSearch(CurlActions):
     def __init__(self, *args, **kwargs):
         super(NodeSearch, self).__init__(*args, **kwargs)
 
+        if self.target is None:
+                raise TargetProblem('I received a target, this should not happen')
+
+        self.url = self._url_prep(self.puppetmaster, FACT_SEARCH, self._query_prep(self._fact_prep(self.facts)))
+
+        if self.debug: print "built a query URL: " + self.url
+
+
 class FactSearch(CurlActions):
     def __init__(self, *args, **kwargs):
         super(FactSearch, self).__init__(*args, **kwargs)
+
+        if self.target is not None:
+            raise TargetProblem('I did not receive a target, this should not happen')
+        
+        self.url = self._url_prep(self.puppetmaster, NODE_SEARCH, self.target)
+
+        if self.debug: 
+            print "built a query URL: " + self.url
+     
+    def _query_prep(self, query_dict):
+        """
+        Setup standard http query string: &query=foo
+        """
+        if self.debug:
+            print "building a query string for %s" % str(query_dict)
+
+        return urllib.urlencode(query_dict)
+
+  
