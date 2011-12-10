@@ -20,11 +20,12 @@ class HTTPCodeProblem(Exception):
 
 class CurlActions(object):
 
+    query_count = 0
     first_query_results_yaml = None
     targets = []
     second_query = {}
 
-    def __init__(self, target=None, fact_search=True, **kwargs):
+    def __init__(self, target=None, *args, **kwargs):
         """
         facts is a parsed hash of facts, that are by default stored in a classvar 
         in the UserInput class. 
@@ -34,6 +35,8 @@ class CurlActions(object):
         from FACT_SEARCH to NODE_SEARCH, and do some other things. This is used
         when we have to do a 2nd lookup, to find an alternative factoutput (-o)
         """
+
+
         self.target         = target
         self.facts          = kwargs.get('facts', ui.facts)
         self.puppetmaster   = kwargs.get('puppetmaster', ui.data['puppetmaster'])
@@ -99,6 +102,10 @@ class CurlActions(object):
         Sends the built request to the API, updates a classvar with the 
         output from the req
         """
+
+        # increment the query count, so we know what query run we're on
+        CurlActions.query_number += 1
+
         if self.debug: print "connecting to: " + self.url
         self.c.perform()
 
@@ -124,3 +131,11 @@ class CurlActions(object):
         if self.debug: print "returning yaml"
         return CurlActions.first_query_results_yaml
 
+
+class NodeSearch(CurlActions):
+    def __init__(self, *args, **kwargs):
+        super(NodeSearch, self).__init__(*args, **kwargs)
+
+class FactSearch(CurlActions):
+    def __init__(self, *args, **kwargs):
+        super(FactSearch, self).__init__(*args, **kwargs)
