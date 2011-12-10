@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 from user_input import UserInput
-from curl_actions import CurlActions
+from curl_actions import NodeSearch
 from output_actions import OutputActions
 
 class Tbd(Exception):
@@ -11,8 +11,8 @@ if __name__ == '__main__':
     # parse the args
     ui = UserInput(sys.argv[1:])
 
-    # throw that dict at the curlactions class to get our data
-    action = CurlActions()
+    # create an instance of the curl actions class
+    action = NodeSearch()
 
     # perform the query
     action.run()
