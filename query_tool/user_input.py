@@ -1,13 +1,9 @@
-import sys
 import argparse
-import os
 
 class UserInput(object):
     usage = "Please read --help"
-    data = None
-    facts = None
-#    facts = {}
-#    debug = False
+    data = {}
+    facts = {}
 
     def __init__(self, args):
         '''
@@ -116,13 +112,4 @@ class UserInput(object):
         if UserInput.data['debug']:
             print 'parsed facts: ' + str(UserInput.data['fact'])
         return dict(UserInput.data['fact'])
-
-    #def debug(self):
-    #    UserInput.debug = self.parsed_args['debug']
-    #    return UserInput.data['debug']
-
-#    def debug_say(self, msg):
-#        if self.debug():
-#            print msg
-
 
