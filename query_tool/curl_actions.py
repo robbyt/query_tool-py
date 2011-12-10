@@ -3,12 +3,6 @@ import StringIO
 import urllib
 from user_input import UserInput as ui
 
-# for building a list of nodes
-NODE_SEARCH = '/production/facts_search/search?'
-
-# once we have our list of nodes, this will return fact from a single node
-FACT_SEARCH = '/production/facts/'
-
 class DictProblem(Exception):
     """
     There is a problem with your dict.
@@ -117,25 +111,40 @@ class CurlActions(object):
 
 
 class NodeSearch(CurlActions):
+    query_url = '/production/facts_search/search?'
+
     def __init__(self, *args, **kwargs):
+        """
+        This class is used for building a list of nodes, or FQDNs.
+        This will be the only class used if your intended output type is
+        'fqdn'. However, if a different output type is required, we must
+        query the API again, with a different URL for each discovered node,
+        using the FactSearch class.
+        """
         super(NodeSearch, self).__init__(*args, **kwargs)
 
         if self.target is None:
                 raise TargetProblem('I received a target, this should not happen')
 
-        self.url = self._url_prep(self.puppetmaster, FACT_SEARCH, self._query_prep(self._fact_prep(self.facts)))
+        self.url = self._url_prep(self.puppetmaster, NodeSearch.query_url, self._query_prep(self._fact_prep(self.facts)))
 
         if self.debug: print "built a query URL: " + self.url
 
 
 class FactSearch(CurlActions):
+    query_url = '/production/facts/'
+
     def __init__(self, *args, **kwargs):
+        """
+        once we have our list of nodes using NodeSearch, this class will return 
+        a dict of all facts from a single node
+        """
         super(FactSearch, self).__init__(*args, **kwargs)
 
         if self.target is not None:
             raise TargetProblem('I did not receive a target, this should not happen')
         
-        self.url = self._url_prep(self.puppetmaster, NODE_SEARCH, self.target)
+        self.url = self._url_prep(self.puppetmaster, FactSearch.query_url, self.target)
 
         if self.debug: 
             print "built a query URL: " + self.url
