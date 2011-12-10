@@ -20,9 +20,11 @@ if __name__ == '__main__':
     # throw the output from that query into the output parser
     output = OutputActions(action.return_yaml())
 
+    # if we're just going to output fqdn, just show the list of servers
     if output.default_output():
         print output
     else:
+    # otherwise, we need to run a few more queries to return the requested output type
         raise Tbd('not done yet')
 
     """
