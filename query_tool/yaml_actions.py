@@ -20,17 +20,15 @@ class YamlActions(object):
         return loader.construct_mapping(node)['values']
 
     def _yaml_hack(self):
-        if ui.debug: print "Adding the yaml hack"
+        if ui.debug: print "Adding the yaml custom tag hack"
         add_constructor(u'!ruby/object:Puppet::Node::Facts', self._yaml_builder)
 
     def to_text(self, yaml_string):
-        if ui.debug: print "returning text"
+        if ui.debug: print "returning text from yaml"
         t = load(yaml_string)
         return '\n'.join(t)
 
-    def to_list(self, yaml_string):
-        if ui.debug: print "returning a python list object"
+    def to_dict(self, yaml_string):
+        if ui.debug: print "returning a python dict object from yaml"
         return load(yaml_string)
 
-    def to_dict(self, yaml_string):
-        raise Tbd

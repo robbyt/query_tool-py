@@ -14,8 +14,11 @@ if __name__ == '__main__':
     # perform the query
     action.run()
 
-    # throw the output from that query into the output parser
-    output = OutputActions(action.return_yaml())
+    # save the results to NodeData
+    action.save()
+
+    # create an instance to read NodeData and UserInput and output data 
+    output = OutputActions()
 
     print output
 

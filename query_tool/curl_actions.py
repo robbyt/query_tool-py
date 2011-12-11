@@ -2,6 +2,8 @@ import pycurl
 import StringIO
 import urllib
 from user_input import UserInput as ui
+from node_data import NodeData 
+
 
 class DictProblem(Exception):
     """
@@ -15,11 +17,8 @@ class TargetProblem(Exception):
 class HTTPCodeProblem(Exception):
     pass
 
+
 class CurlActions(object):
-
-    query_count = 0
-    targets = []
-
     def __init__(self, target=None, *args, **kwargs):
         """
         facts is a parsed hash of facts, that are by default stored in a classvar 
@@ -42,14 +41,19 @@ class CurlActions(object):
         # empty, until after run()
         self.query_result  = None
 
+        # string buffer to store curl results
         self.response_buffer = StringIO.StringIO()
 
+        # curl instance, will be used to make the query
         self.c = pycurl.Curl()
+
+        # NodeData stores results from the query, will be used for output
+        self.node = NodeData()
 
     def _curl_prep(self):
         """
         This is not included in __init__ because it makes using CurlActions as
-        a parent class too dificult. This should be manually run before run()
+        a parent class too dificult. This gets executed inside run()
         """
         self.c.setopt(pycurl.URL, self.url)
         self.c.setopt(pycurl.WRITEFUNCTION, self.response_buffer.write)
@@ -63,7 +67,7 @@ class CurlActions(object):
 
     def _fact_prep(self, d, append_string='facts.'):
         """
-        Recursive function that I found on stackoverflow to append facts. to 
+        Recursive function that I found on stackoverflow to append 'facts.' to 
         every key in the dict
         """
         if type(d) is dict:
@@ -93,13 +97,13 @@ class CurlActions(object):
         if self.debug: print "connecting to: " + self.url
         self.c.perform()
 
-        if self.check_http_code():
+        if self._check_http_code():
             self.query_result = self.response_buffer.getvalue()
             return True
         else:
             raise HTTPCodeProblem('Error connecting to the Puppet inventory API')
 
-    def check_http_code(self):
+    def _check_http_code(self):
         """
         check the http code to make sure the query was successful
         """
@@ -114,6 +118,10 @@ class CurlActions(object):
     def return_yaml(self):
         if self.debug: print "Returning yaml"
         return self.query_result
+
+    def save(self):
+        print 'Noting to save!'
+        return False
 
 
 class NodeSearch(CurlActions):
@@ -145,6 +153,12 @@ class NodeSearch(CurlActions):
 
         return urllib.urlencode(query_dict)
 
+    def save(self):
+        """
+        Takes the yaml string of FQDNs created in by this subclass, where 
+        NodeData will deserialize it to a python dict, and store it
+        """
+        self.node.store_targets(self.query_result)
 
 class FactSearch(CurlActions):
     query_url = '/production/facts/'
@@ -164,4 +178,11 @@ class FactSearch(CurlActions):
         if self.debug: 
             print "built a query URL: " + self.url
 
-       
+    def save(self):
+        """
+        Take the yaml string of fact data for a single node, store it using 
+        NodeData where it will be deserialized and stored as a python dict in 
+        a class variable
+        """
+        self.node.store_facts(self.target, self.query_results)
+

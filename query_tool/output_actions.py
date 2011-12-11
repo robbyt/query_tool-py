@@ -1,21 +1,29 @@
 from yaml_actions import YamlActions
 from curl_actions import FactSearch
 from user_input import UserInput as ui
+from node_data import NodeData as node
 
 class Tbd(Exception):
     pass
 
 class OutputActions(object):
-    def __init__(self, yaml_from_first_query,**kwargs):
+    def __init__(self, *args, **kwargs):
         self.output_fact = kwargs.get('output_fact', ui.data['output_fact'])
         self.yaml_enabled = kwargs.get('yaml', ui.data['yaml'])
-        self.yaml_from_first_query = yaml_from_first_query
+        self.targets = node.targets
+        self.facts = node.facts
 
-        self.y = YamlActions()
+        self.yaml = YamlActions()
+
+        # class that contains data returned from curl actions
+        self.node = node
 
 
     def __str__(self):
-        return self.default_output()
+        """
+        a newline-deliminated list of output data
+        """
+        return "\n".join(self.default_output())
 
     def default_output(self):
         """
@@ -27,7 +35,7 @@ class OutputActions(object):
         set of queries against the API for each of those hostnames. Annoying.
         """
         if self._output_type_is_fqdn():
-            return self.y.to_text(self.yaml_from_first_query)
+            return node.targets
         else:
             raise Tbd
        #     return self.y
@@ -38,7 +46,8 @@ class OutputActions(object):
         """
         facts = FactSearch(target=target)
         facts.run()
-        return self.y.to_text(facts.return_yaml())
+        facts.save()
+        raise Tbd
 
     def _output_type_is_fqdn(self):
         """
@@ -54,11 +63,11 @@ class OutputActions(object):
             if ui.debug: print 'non-default output type found'
             return False
 
-
     def _yaml_picker(self):
         """
         will output yaml, if yaml == True, otherwise will output text
         """
+        raise Tbd
         if self.yaml_enabled:
             return self.output_yaml()
         else:
