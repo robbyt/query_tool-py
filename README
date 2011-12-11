@@ -28,3 +28,15 @@ optional arguments:
   --debug
 
 
+
+Notes:
+If you enable the inventory service on an Puppetmaster with an existing database, you may run into a problem with the db schema not having the correct schema. See this thread for more info:
+http://groups.google.com/group/puppet-users/browse_thread/thread/2ae89e8bc480c57a
+
+To sum it up, add the following to your puppet.conf, restart the puppetmaster, then remove. 
+
+[master]
+dbmigrate=true
+
+
+
