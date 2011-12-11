@@ -26,7 +26,7 @@ class OutputActions(object):
         information other than just the FQDN name, we need to run a second 
         set of queries against the API for each of those hostnames. Annoying.
         """
-        if self._output_type_is_fqdn:
+        if self._output_type_is_fqdn():
             return self.y.to_text(self.yaml_from_first_query)
         else:
             raise Tbd
