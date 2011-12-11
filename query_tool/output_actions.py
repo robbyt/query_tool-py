@@ -7,7 +7,8 @@ class Tbd(Exception):
 
 class OutputActions(object):
     def __init__(self, yaml_from_first_query,**kwargs):
-        self.output_fact = kwargs.get('output_fact', ui.data['output_fact'])
+#        self.output_fact = kwargs.get('output_fact', ui.data['output_fact'])
+        self.output_fact = 'fqdn' # temp
         self.yaml_enabled = kwargs.get('yaml', ui.data['yaml'])
         self.yaml_from_first_query = yaml_from_first_query
 
