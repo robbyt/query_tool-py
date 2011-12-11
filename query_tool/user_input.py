@@ -4,6 +4,7 @@ class UserInput(object):
     usage = "Please read --help"
     data = {}
     facts = {}
+    debug = False
 
     def __init__(self, args):
         '''
@@ -39,6 +40,9 @@ class UserInput(object):
         # and store the results as class variables
         UserInput.data = self.get_args_as_dict()
         UserInput.facts = self.get_facts_as_dict()
+
+        # setting a class variable so that accessing debug status is easier
+        UserInput.debug = UserInput['data']['debug']
 
     def _setup_args(self):
         '''operands, or server/cluster to perform an operation on'''
@@ -100,7 +104,7 @@ class UserInput(object):
         UserInput.data = vars(self.parser.parse_args(self.args))
         UserInput.facts = vars(self.parser.parse_args(self.args))['fact']
         return UserInput.data
-    
+
     def _get_args_as_dict(self):
         if UserInput.data['debug']:
             print 'parsed args in dict:'
