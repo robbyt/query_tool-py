@@ -22,34 +22,3 @@ if __name__ == '__main__':
 
     print output
 
-    # if we're just going to output fqdn, just show the list of servers
-#    if output.default_output():
-#    else:
-    # otherwise, we need to run a few more queries to return the requested output type
-#        raise Tbd('not done yet')
-
-    """
-    ### end ###
-    # if the output format is default, just output the FQDNs
-        
-        if ui.data['yaml']:
-            print action.return_yaml()
-        else:
-            print y.to_text(action.return_yaml())
-
-    # otherwise, we have to do some more work
-    else:
-        search_results = {}
-        for t in y.to_list(action.return_yaml()):
-            node_search = CurlActions(target=t, fact_search=False, **data)
-            node_search.run()
-            search_results[t] = y.to_text(node_search.return_yaml())
-            if data['debug']: print 'Added a new element to search_results: %s' % (search_results[t])
-
-        if data['yaml']:
-            print 'not implemented.'
-        else:
-            for i in search_results.iteritems():
-                print i
-        
-    """ 
