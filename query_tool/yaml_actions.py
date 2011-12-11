@@ -2,14 +2,6 @@ from yaml import load, add_constructor
 #from yaml import dump
 from user_input import UserInput as ui
 
-#try:
-#    from yaml import CLoader as Loader, CDumper as Dumper
-#except ImportError:
-#    from yaml import Loader, Dumper
-
-class Tbd(Exception):
-    pass
-
 class YamlActions(object):
 
     def __init__(self):
