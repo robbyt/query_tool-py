@@ -36,7 +36,7 @@ class CurlActions(object):
         self.puppetmaster   = kwargs.get('puppetmaster', ui.data['puppetmaster'])
         self.ssl_cert       = kwargs.get('ssl_cert', ui.data['ssl_cert'])
         self.ssl_key        = kwargs.get('ssl_key', ui.data['ssl_key'])
-#        self.output_fact    = kwargs.get('output_fact', ui.data['output_fact'])
+        self.output_fact    = kwargs.get('output_fact', ui.data['output_fact'])
         self.debug          = kwargs.get('debug', ui.debug)
 
         # empty, until after run()

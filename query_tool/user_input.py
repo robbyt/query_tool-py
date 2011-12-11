@@ -4,7 +4,7 @@ class UserInput(object):
     usage = "Please read --help"
     data = {}
     facts = {}
-    debug = False
+    debug = True
 
     def __init__(self, args):
         '''
@@ -85,14 +85,14 @@ class UserInput(object):
             help=self.htext['yaml'],
             default=False
         )
-        """
+
         self.parser.add_argument(
             "-o", "--output_fact",
             dest="output_fact",
             help=self.htext['output_fact'],
             default='fqdn'
         )
-        """
+
         ## other options
 #        self.parser.add_argument("--debug", action="store_true", dest="debug", default=False)
 
