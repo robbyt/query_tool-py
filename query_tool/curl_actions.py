@@ -129,7 +129,15 @@ class NodeSearch(CurlActions):
         self.url = self._url_prep(self.puppetmaster, NodeSearch.query_url, self._query_prep(self._fact_prep(self.facts)))
 
         if self.debug: print "built a query URL: " + self.url
+ 
+    def _query_prep(self, query_dict):
+        """
+        Setup standard http query string: &query=foo
+        """
+        if self.debug:
+            print "building a query string for %s" % str(query_dict)
 
+        return urllib.urlencode(query_dict)
 
 class FactSearch(CurlActions):
     query_url = '/production/facts/'
@@ -148,14 +156,3 @@ class FactSearch(CurlActions):
 
         if self.debug: 
             print "built a query URL: " + self.url
-     
-    def _query_prep(self, query_dict):
-        """
-        Setup standard http query string: &query=foo
-        """
-        if self.debug:
-            print "building a query string for %s" % str(query_dict)
-
-        return urllib.urlencode(query_dict)
-
-  
