@@ -18,9 +18,7 @@ class HTTPCodeProblem(Exception):
 class CurlActions(object):
 
     query_count = 0
-    first_query_results_yaml = None
     targets = []
-    second_query = {}
 
     def __init__(self, target=None, *args, **kwargs):
         """
@@ -33,18 +31,26 @@ class CurlActions(object):
         when we have to do a 2nd lookup, to find an alternative factoutput (-o)
         """
 
-
         self.target         = target
         self.facts          = kwargs.get('facts', ui.facts)
         self.puppetmaster   = kwargs.get('puppetmaster', ui.data['puppetmaster'])
         self.ssl_cert       = kwargs.get('ssl_cert', ui.data['ssl_cert'])
         self.ssl_key        = kwargs.get('ssl_key', ui.data['ssl_key'])
         self.output_fact    = kwargs.get('output_fact', ui.data['output_fact'])
-        self.debug          = kwargs.get('debug', ui.data['debug'])
- 
+        self.debug          = kwargs.get('debug', ui.debug)
+
+        # empty, until after run()
+        self.query_result  = None
+
         self.response_buffer = StringIO.StringIO()
 
         self.c = pycurl.Curl()
+
+    def _curl_prep(self):
+        """
+        This is not included in __init__ because it makes using CurlActions as
+        a parent class too dificult. This should be manually run before run()
+        """
         self.c.setopt(pycurl.URL, self.url)
         self.c.setopt(pycurl.WRITEFUNCTION, self.response_buffer.write)
         #self.c.setopt(pycurl.FOLLOWLOCATION, True)
@@ -81,14 +87,14 @@ class CurlActions(object):
         output from the req
         """
 
-        # increment the query count, so we know what query run we're on
-        CurlActions.query_number += 1
+        # setup a bunch of stuff in the curl object
+        self._curl_prep()
 
         if self.debug: print "connecting to: " + self.url
         self.c.perform()
 
         if self.check_http_code():
-            CurlActions.first_query_results_yaml = self.response_buffer.getvalue()
+            self.query_result = self.response_buffer.getvalue()
             return True
         else:
             raise HTTPCodeProblem('Error connecting to the Puppet inventory API')
@@ -106,8 +112,8 @@ class CurlActions(object):
             return True
 
     def return_yaml(self):
-        if self.debug: print "returning yaml"
-        return CurlActions.first_query_results_yaml
+        if self.debug: print "Returning yaml"
+        return self.query_result
 
 
 class NodeSearch(CurlActions):
@@ -121,15 +127,15 @@ class NodeSearch(CurlActions):
         query the API again, with a different URL for each discovered node,
         using the FactSearch class.
         """
+        # include the inherited __init__
         super(NodeSearch, self).__init__(*args, **kwargs)
 
-        if self.target is None:
-                raise TargetProblem('I received a target, this should not happen')
+        if self.target is not None:
+                raise TargetProblem('I received a target called %s, this should not happen' % (self.target))
 
         self.url = self._url_prep(self.puppetmaster, NodeSearch.query_url, self._query_prep(self._fact_prep(self.facts)))
-
         if self.debug: print "built a query URL: " + self.url
- 
+
     def _query_prep(self, query_dict):
         """
         Setup standard http query string: &query=foo
@@ -139,6 +145,7 @@ class NodeSearch(CurlActions):
 
         return urllib.urlencode(query_dict)
 
+
 class FactSearch(CurlActions):
     query_url = '/production/facts/'
 
@@ -147,12 +154,14 @@ class FactSearch(CurlActions):
         once we have our list of nodes using NodeSearch, this class will return 
         a dict of all facts from a single node
         """
+        # include the inherited __init__
         super(FactSearch, self).__init__(*args, **kwargs)
 
-        if self.target is not None:
+        if self.target is None:
             raise TargetProblem('I did not receive a target, this should not happen')
-        
+ 
         self.url = self._url_prep(self.puppetmaster, FactSearch.query_url, self.target)
-
         if self.debug: 
             print "built a query URL: " + self.url
+
+       
