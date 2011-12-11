@@ -7,6 +7,9 @@ from user_input import UserInput as ui
 #except ImportError:
 #    from yaml import Loader, Dumper
 
+class Tbd(Exception):
+    pass
+
 class YamlActions(object):
 
     def __init__(self):
@@ -29,3 +32,5 @@ class YamlActions(object):
         if ui.debug: print "returning a python list object"
         return load(yaml_string)
 
+    def to_dict(self, yaml_string):
+        raise Tbd
