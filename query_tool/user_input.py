@@ -38,8 +38,8 @@ class UserInput(object):
         self._parse_args()
 
         # and store the results as class variables
-        UserInput.data = self.get_args_as_dict()
-        UserInput.facts = self.get_facts_as_dict()
+        UserInput.data = self._get_args_as_dict()
+        UserInput.facts = self._get_facts_as_dict()
 
         # setting a class variable so that accessing debug status is easier
         UserInput.debug = UserInput['data']['debug']
