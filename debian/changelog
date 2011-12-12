@@ -1,5 +1,11 @@
+query-tool (1.0-2) lucid; urgency=low
+
+  * Adding pycurl package to deps 
+
+ -- Rob Terhaar <rterhaar@puppet.dev.workmarket.com>  Mon, 12 Dec 2011 00:52:02 +0000
+
 query-tool (1.0-1) unstable; urgency=low
 
   * Initial release
 
- -- Rob Terhaar <rterhaar@atlanticdynamic.com>  Sun, 11 Dec 2011 19:25:08 +0000
+ -- Rob Terhaar <rterhaar@atlanticdynamic.com>  Sun, 11 Dec 2011 00:00:01 +0000

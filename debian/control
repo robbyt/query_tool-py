@@ -9,6 +9,6 @@ Homepage: https://github.com/robbyt/query_tool-py
 
 Package: query-tool
 Architecture: all
-Depends: ${misc:Depends}, python (>= 2.5), python-central (>= 0.6.11), python-argparse
+Depends: ${misc:Depends}, python (>= 2.5), python-central (>= 0.6.11), python-argparse, python-pycurl
 Description: Python module and cli tool for querying facts from the PuppetLabs Puppet Inventory API
  Simple stuff.
