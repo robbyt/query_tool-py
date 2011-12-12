@@ -18,25 +18,27 @@ and configure some other things on your puppetmaster. If this sounds like too
 much work, or if you don't really need high-performance queries, check out my 
 Ruby query tool instead: https://github.com/robbyt/puppet-querytool.rb
 
-
-usage: query_tool.py [-h] -f factname factvalue [-p PUPPETMASTER] [-c CERT]
-                     [-k KET] [--yaml] [--output_fact OUTPUT_FACT] [--debug]
-
-query_tool
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -f factname factvalue, --fact factname factvalue
-  -p PUPPETMASTER, --puppetmaster PUPPETMASTER
-                        The PuppetMaster REST address to query against
-  -c CERT, --cert CERT  The SSL cert to use for authentication
-  -k KET, --key KET     The SSL key to use for authentication
-  --yaml                Output the results in raw yaml
-  --output_fact OUTPUT_FACT
-                        What fact do you want to find out from these servers
-  --debug
-
-
+    usage: query_tool [-h] -f factname factvalue [-p PUPPETMASTER] [-c SSL_CERT]
+                      [-k SSL_KEY] [-o OUTPUT_FACT] [--debug]
+    
+    query_tool
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -f factname factvalue, --fact factname factvalue
+                            The fact:data that you want to search for, can be used
+                            multiple times to filter for multiple facts. Usage
+                            Example: --fact kernel Linux --fact ec2_size m1.small
+      -p PUPPETMASTER, --puppetmaster PUPPETMASTER
+                            The PuppetMaster REST address to query against. Must
+                            be formatted like this: https://127.0.0.1:8140/
+      -c SSL_CERT, --cert SSL_CERT
+                            The SSL cert to use for authentication
+      -k SSL_KEY, --key SSL_KEY
+                            The SSL key to use for authentication
+      -o OUTPUT_FACT, --output_fact OUTPUT_FACT
+                            What fact do you want to find out from these servers
+      --debug
 
 == notes ==
 If you enable the inventory service on an Puppetmaster with an existing 
