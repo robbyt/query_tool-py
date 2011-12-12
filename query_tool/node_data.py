@@ -27,7 +27,10 @@ class NodeData(object):
 
         data = []
         for l in NodeData.facts:
-            data.append(l[fact_to_find])
+            try:
+                data.append(l[fact_to_find])
+            except KeyError:
+                pass
 
         return data
 
