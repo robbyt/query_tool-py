@@ -1,0 +1,14 @@
+Source: query-tool
+Section: misc
+Priority: optional
+Maintainer: Rob Terhaar <rterhaar@atlanticdynamic.com>
+Build-Depends: cdbs, debhelper (>= 7), python (>= 2.5), python-support
+XS-Python-Version: >= 2.5
+Standards-Version: 3.8.3
+Homepage: https://github.com/robbyt/query_tool-py
+
+Package: query-tool
+Architecture: all
+Depends: ${misc:Depends}, python (>= 2.5), python-central (>= 0.6.11), python-argparse
+Description: Python module and cli tool for querying facts from the PuppetLabs Puppet Inventory API
+ Simple stuff.
