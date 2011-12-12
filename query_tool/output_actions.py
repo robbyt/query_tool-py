@@ -10,7 +10,7 @@ class Tbd(Exception):
 class OutputActions(object):
     def __init__(self, *args, **kwargs):
         self.output_fact = kwargs.get('output_fact', ui.data['output_fact'])
-        self.yaml_enabled = kwargs.get('yaml', ui.data['yaml'])
+        #self.yaml_enabled = kwargs.get('yaml', ui.data['yaml'])
 
         self.node = NodeData()
         self.targets = self.node.targets

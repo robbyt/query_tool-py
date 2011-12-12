@@ -78,6 +78,7 @@ class UserInput(object):
             default='/var/lib/puppet/ssl/private_keys/query_tool.pem'
         )
 
+        """
         self.parser.add_argument(
             "--yaml",
             action="store_true",
@@ -85,7 +86,7 @@ class UserInput(object):
             help=self.htext['yaml'],
             default=False
         )
-
+        """
         self.parser.add_argument(
             "-o", "--output_fact",
             dest="output_fact",
