@@ -6,3 +6,5 @@ elb_tool.egg-info/
 debian/elb-tool*
 debian/files
 debian/python-module-stampdir/
+debian/query-tool*
+query_tool.egg-info/
