@@ -1,13 +1,22 @@
-This is a CLI tool that will help you query data from your Puppet Master. It's useful if you would like to find a list of servers that match one or more Facter facts.
+This is a CLI tool that will help you query data from your Puppet Master. 
+It's useful if you would like to find a list of servers that match one or 
+more Facter facts.
 
-This iteration of the query tool is actually the third in a series, and was originally inspired by a tool from joemac on #puppet on FreeNode. This rewrite differs from my last ruby version of this tool for two important reasons:
+This iteration of the query tool is actually the third in a series, and was 
+originally inspired by a tool from joemac on #puppet on FreeNode. This 
+rewrite differs from my last ruby version of this tool for two important reasons:
 
 * it is written in python (because I'm better at writing python than ruby)
 * it is really fast! (but it requires Puppet 2.6.7 and above)
 
-The reason that this rewrite is much faster than my last rewrite is because this version uses the official Puppet Inventory API: http://docs.puppetlabs.com/guides/inventory_service.html
+The reason that this rewrite is much faster than my last rewrite is because 
+this version uses the official Puppet Inventory API:
+http://docs.puppetlabs.com/guides/inventory_service.html
 
-Using the Inventory Service requires that you setup an SSL cert for this script, and configure some other things on your puppetmaster. If this sounds like too much work, or if you don't really need high-performance queries, check out my Ruby query tool instead: https://github.com/robbyt/puppet-querytool.rb
+Using the Inventory Service requires that you setup an SSL cert for this script, 
+and configure some other things on your puppetmaster. If this sounds like too 
+much work, or if you don't really need high-performance queries, check out my 
+Ruby query tool instead: https://github.com/robbyt/puppet-querytool.rb
 
 
 usage: query_tool.py [-h] -f factname factvalue [-p PUPPETMASTER] [-c CERT]
@@ -29,14 +38,18 @@ optional arguments:
 
 
 
-Notes:
-If you enable the inventory service on an Puppetmaster with an existing database, you may run into a problem with the db schema not having the correct schema. See this thread for more info:
+== notes ==
+If you enable the inventory service on an Puppetmaster with an existing 
+database, you may run into a problem with the db schema not having the 
+correct schema. See this thread for more info:
+
 http://groups.google.com/group/puppet-users/browse_thread/thread/2ae89e8bc480c57a
 
-To sum it up, add the following to your puppet.conf, restart the puppetmaster, then remove. 
+To sum it up, add this to your puppet.conf, restart the puppetmaster, then remove. 
 
 [master]
 dbmigrate=true
 
-
-
+== .deb file ==
+To build a deb file for this module, run "debuild -us -uc", and to update the 
+debian changelog run "dch -i".
