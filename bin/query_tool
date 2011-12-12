@@ -1,20 +1,24 @@
 #!/usr/bin/env python
 import sys
 from query_tool.user_input import UserInput
-from query_tool.curl_actions import CurlActions
+from query_tool.curl_actions import NodeSearch
+from query_tool.output_actions import OutputActions
 
 if __name__ == '__main__':
     # parse the args
     ui = UserInput(sys.argv[1:])
 
-    # collect the parsed args into a dict
-    data = ui.get_args_as_dict()
+    # create an instance of the curl actions class
+    action = NodeSearch()
 
-    # throw that dict at the curlactions class to get our data
-    action = CurlActions(facts = ui.get_facts_as_dict(), **data)
+    # perform the query
     action.run()
 
-    if data['yaml']:
-        print action.return_yaml
-    else:
-        print action.return_text
+    # save the results to NodeData
+    action.save()
+
+    # create an instance to read NodeData and UserInput and output data 
+    output = OutputActions()
+
+    print output
+
