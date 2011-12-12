@@ -158,7 +158,7 @@ class NodeSearch(CurlActions):
         Takes the yaml string of FQDNs created in by this subclass, where 
         NodeData will deserialize it to a python dict, and store it
         """
-        if self.debug: print "Saving node list data: %s" % (self.query_result)
+        if self.debug: print "Passing NodeData yaml data to save into targets[]: \n %s" % (self.query_result)
         self.node.store_targets(self.query_result)
 
 class FactSearch(CurlActions):
@@ -186,5 +186,6 @@ class FactSearch(CurlActions):
         a class variable
         """
         if self.debug: print "Saving fact search data for %s" % (self.target)
-        self.node.store_facts(self.target, self.query_results)
+#        if self.debug: print "facts: %s" % (self.query_result)
+        self.node.store_facts(self.target, self.query_result)
 

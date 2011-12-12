@@ -1,7 +1,8 @@
 from yaml_actions import YamlActions
 from curl_actions import FactSearch
 from user_input import UserInput as ui
-from node_data import NodeData as node
+from node_data import NodeData
+#import multiprocessing
 
 class Tbd(Exception):
     pass
@@ -10,13 +11,13 @@ class OutputActions(object):
     def __init__(self, *args, **kwargs):
         self.output_fact = kwargs.get('output_fact', ui.data['output_fact'])
         self.yaml_enabled = kwargs.get('yaml', ui.data['yaml'])
-        self.targets = node.targets
-        self.facts = node.facts
+
+        self.node = NodeData()
+        self.targets = self.node.targets
+        self.facts = self.node.facts
 
         self.yaml = YamlActions()
 
-        # class that contains data returned from curl actions
-        self.node = node
 
 
     def __str__(self):
@@ -35,10 +36,19 @@ class OutputActions(object):
         set of queries against the API for each of those hostnames. Annoying.
         """
         if self._output_type_is_fqdn():
-            return node.targets
+            return self.node.targets
         else:
-            raise Tbd
-       #     return self.y
+
+            # create a pool, for running curl queries in parallel
+#            pool = multiprocessing.Pool()
+#            pool.map(self._target_to_fact_dict, self.targets)
+
+            # this loop sucks, since it's fully blocking for each API request
+            for t in self.targets:
+                self._target_to_fact_dict(t)
+            
+#            if ui.debug: print 'All done with query batch, preping to return some data:"%s"' % (self.node.facts)
+            return self.node.get_fact_from_facts(self.output_fact)
 
     def _target_to_fact_dict(self, target):
         """
@@ -47,7 +57,6 @@ class OutputActions(object):
         facts = FactSearch(target=target)
         facts.run()
         facts.save()
-        raise Tbd
 
     def _output_type_is_fqdn(self):
         """
