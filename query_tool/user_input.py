@@ -23,7 +23,7 @@ class UserInput(object):
         # prep some variables
         self.args = args
         self.htext = {
-            'fact':         "The fact:data that you want to search for, can be used multiple times to filter for multiple facts. Usage Example: --fact kernel Linux --fact ec2_size m1.small",
+            'fact':         "The fact:data that you want to search for, can be used multiple times to filter for multiple facts. Usage Example: --fact kernel Linux --fact ec2_instance_type m1.small",
             'puppetmaster': 'The PuppetMaster REST address to query against. Must be formatted like this: https://127.0.0.1:8140/',
             'ssl_cert':     'The SSL cert to use for authentication',
             'ssl_key':      'The SSL key to use for authentication',
