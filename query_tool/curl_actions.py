@@ -4,6 +4,8 @@ import urllib
 from user_input import UserInput as ui
 from node_data import NodeData 
 
+from eventlet import patcher
+patcher.monkey_patch(all=True)
 
 class DictProblem(Exception):
     """

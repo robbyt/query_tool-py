@@ -2,10 +2,28 @@ from yaml_actions import YamlActions
 from curl_actions import FactSearch
 from user_input import UserInput as ui
 from node_data import NodeData
-#import multiprocessing
+
+# parallel magic for async curl requests
+import eventlet
+pool = eventlet.GreenPool()
 
 class Tbd(Exception):
     pass
+
+def _parallel_query(targets):
+    pile = eventlet.GreenPile(pool)
+    for t in targets:
+        print 'query for: %s' % (t)
+        pile.spawn(_target_to_fact_dict, t)
+
+def _target_to_fact_dict(target):
+    """
+    Feed me a target, and I'll return all facts about that target
+    """
+    print 'fact finder for: %s' % (target)
+    facts = FactSearch(target=target)
+    facts.run()
+    facts.save()
 
 class OutputActions(object):
     def __init__(self, *args, **kwargs):
@@ -43,20 +61,10 @@ class OutputActions(object):
 #            pool = multiprocessing.Pool()
 #            pool.map(self._target_to_fact_dict, self.targets)
 
-            # this loop sucks, since it's fully blocking for each API request
-            for t in self.targets:
-                self._target_to_fact_dict(t)
+            _parallel_query(self.targets)
             
 #            if ui.debug: print 'All done with query batch, preping to return some data:"%s"' % (self.node.facts)
             return self.node.get_fact_from_facts(self.output_fact)
-
-    def _target_to_fact_dict(self, target):
-        """
-        Feed me a target, and I'll return all facts about that target
-        """
-        facts = FactSearch(target=target)
-        facts.run()
-        facts.save()
 
     def _output_type_is_fqdn(self):
         """
