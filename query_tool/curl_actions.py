@@ -1,11 +1,8 @@
 import pycurl
 import StringIO
-import urllib
+from  urllib import urlencode
 from user_input import UserInput as ui
 from node_data import NodeData 
-
-from eventlet import patcher
-patcher.monkey_patch(all=True)
 
 class DictProblem(Exception):
     """
@@ -153,7 +150,7 @@ class NodeSearch(CurlActions):
         if self.debug:
             print "building a query string for %s" % str(query_dict)
 
-        return urllib.urlencode(query_dict)
+        return urlencode(query_dict)
 
     def save(self):
         """
