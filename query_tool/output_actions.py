@@ -13,18 +13,13 @@ class Tbd(Exception):
 def _parallel_query(targets):
     pile = eventlet.GreenPile(pool)
     for t in targets:
-        print 'query for: %s' % (t)
-        print 'eventlet status: %s/%s' % (pile.pool.running(), pile.pool.size)
         pile.spawn(_target_to_fact_dict, t)
-    print dir(pile.pool)
-    print pile
-    print pile.pool.waitall()
+    pile.pool.waitall()
 
 def _target_to_fact_dict(target):
     """
     Feed me a target, and I'll return all facts about that target
     """
-    print 'fact finder for: %s' % (target)
     facts = FactSearch(target=target)
     facts.run()
     facts.save()
