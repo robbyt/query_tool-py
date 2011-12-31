@@ -1,4 +1,6 @@
-import pycurl
+import eventlet
+pycurl = eventlet.patcher.import_patched('pycurl')
+
 import StringIO
 from  urllib import urlencode
 from user_input import UserInput as ui
@@ -98,6 +100,7 @@ class CurlActions(object):
 
         if self._check_http_code():
             self.query_result = self.response_buffer.getvalue()
+            #return self.response_buffer.getvalue()
             return True
         else:
             raise HTTPCodeProblem('Error connecting to the Puppet inventory API')
