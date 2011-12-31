@@ -4,7 +4,11 @@ from user_input import UserInput
 from curl_actions import NodeSearch
 from output_actions import OutputActions
 
+import eventlet
+
 if __name__ == '__main__':
+    eventlet.monkey_patch()
+
     # parse the args
     ui = UserInput(sys.argv[1:])
 
