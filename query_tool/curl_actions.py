@@ -18,7 +18,6 @@ class TargetProblem(Exception):
 class HTTPCodeProblem(Exception):
     pass
 
-
 class CurlActions(object):
     def __init__(self, target=None, *args, **kwargs):
         """
@@ -76,12 +75,10 @@ class CurlActions(object):
         else:
             return d
 
-    def _url_prep(self, puppetmaster, url_path, query=None):
+    def _url_prep(self, query, puppetmaster, url_path):
         """
         Will build a complete URL, containing hostname, query path, and query
         """
-        if query is None:
-            query = self.facts
         if self.debug: 
             print "running url prep for: " + str(query)
         return puppetmaster + url_path + query
@@ -143,7 +140,10 @@ class NodeSearch(CurlActions):
         if self.target is not None:
                 raise TargetProblem('I received a target called %s, this should not happen' % (self.target))
 
-        self.url = self._url_prep(self.puppetmaster, NodeSearch.query_url, self._query_prep(self._fact_prep(self.facts)))
+        self.url = self._url_prep(puppetmaster=self.puppetmaster,
+                                  url_path=NodeSearch.query_url,
+                                  query=self._query_prep(self._fact_prep(self.facts)))
+
         if self.debug: print "built a query URL: " + self.url
 
     def _query_prep(self, query_dict):
@@ -176,10 +176,13 @@ class FactSearch(CurlActions):
 
         if self.target is None:
             raise TargetProblem('I did not receive a target, this should not happen')
- 
-        self.url = self._url_prep(self.puppetmaster, FactSearch.query_url, self.target)
-        if self.debug: 
-            print "built a query URL: " + self.url
+
+        self.url = self._url_prep(puppetmaster=self.puppetmaster, 
+                                  url_path=FactSearch.query_url, 
+                                  query=self.target)
+        if self.debug:
+            for u in self.url:
+                print "built a query URL: " + u
 
     def save(self):
         """
